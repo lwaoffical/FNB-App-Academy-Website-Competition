@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toolkit - Campus Companion SA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h2 class="nav-logo">Campus Companion SA</h2>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="toolkit.html" class="active">Toolkit</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Timetable Maker -->
+        <section>
+            <h2>Timetable Maker</h2>
+            <form id="timetable-form">
+                <label>Day:</label>
+                <select id="day" required>
+                    <option value="">Select a day</option>
+                    <option>Monday</option>
+                    <option>Tuesday</option>
+                    <option>Wednesday</option>
+                    <option>Thursday</option>
+                    <option>Friday</option>
+                    <option>Saturday</option>
+                    <option>Sunday</option>
+                </select>
+                <label>Subject:</label>
+                <input type="text" id="subject" placeholder="e.g., Math" required>
+                <label>Time:</label>
+                <input type="time" id="time" required>
+                <button type="submit">Add / Update</button>
+            </form>
+
+            <table id="timetable-table" border="1">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="timetable-body"></tbody>
+            </table>
+        </section>
+
+        <!-- Test/Assignment Reminders -->
+        <section>
+            <h2>Test & Assignment Reminders</h2>
+            <form id="reminder-form">
+                <label>Task Name:</label>
+                <input type="text" id="task" placeholder="e.g., Math Test" required>
+                <label>Details:</label>
+                <textarea id="details" placeholder="e.g., Sections 1, 2, 3 - 40% of semester mark" required></textarea>
+                <label>Due Date:</label>
+                <input type="date" id="date" required>
+                <button type="submit">Add / Update</button>
+            </form>
+            <ul id="reminder-list"></ul>
+        </section>
+
+        <!-- Quick Notes -->
+        <section>
+            <h2>Quick Notes</h2>
+            <textarea id="notes" style="height: 200px;" placeholder="Write any quick side notes here..."></textarea>
+            <button onclick="saveNotes()">Save Notes</button>
+            <p id="save-status" style="color: green;"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Campus Companion SA</p>
+    </footer>
+
+    <script>
+        // Timetable Data
+        let timetableData = JSON.parse(localStorage.getItem('timetableData')) || [];
+        let editingTimetableIndex = null;
+        const timetableBody = document.getElementById('timetable-body');
+
+        function renderTimetable() {
+            timetableBody.innerHTML = "";
+            timetableData.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.day}</td>
+                    <td>${entry.subject}</td>
+                    <td>${entry.time}</td>
+                    <td>
+                        <button onclick="editTimetable(${index})">Edit</button>
+                        <button onclick="deleteTimetable(${index})">Delete</button>
+                    </td>
+                `;
+                timetableBody.appendChild(row);
+            });
+        }
+        renderTimetable();
+
+        document.getElementById('timetable-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const day = document.getElementById('day').value;
+            const subject = document.getElementById('subject').value;
+            const time = document.getElementById('time').value;
+
+            if (editingTimetableIndex !== null) {
+                timetableData[editingTimetableIndex] = { day, subject, time };
+                editingTimetableIndex = null;
+            } else {
+                timetableData.push({ day, subject, time });
+            }
+
+            localStorage.setItem('timetableData', JSON.stringify(timetableData));
+            renderTimetable();
+            e.target.reset();
+        });
+
+        function editTimetable(index) {
+            const entry = timetableData[index];
+            document.getElementById('day').value = entry.day;
+            document.getElementById('subject').value = entry.subject;
+            document.getElementById('time').value = entry.time;
+            editingTimetableIndex = index;
+        }
+
+        function deleteTimetable(index) {
+            timetableData.splice(index, 1);
+            localStorage.setItem('timetableData', JSON.stringify(timetableData));
+            renderTimetable();
+        }
+
+        // Reminders Data
+        let reminderData = JSON.parse(localStorage.getItem('reminderData')) || [];
+        let editingReminderIndex = null;
+        const reminderList = document.getElementById('reminder-list');
+
+        function renderReminders() {
+            reminderList.innerHTML = "";
+            reminderData.forEach((reminder, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${reminder.task}</strong> - ${reminder.details} (Due: ${reminder.date})
+                    <button onclick="editReminder(${index})">Edit</button>
+                    <button onclick="deleteReminder(${index})">Delete</button>
+                `;
+                reminderList.appendChild(li);
+            });
+        }
+        renderReminders();
+
+        document.getElementById('reminder-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const task = document.getElementById('task').value;
+            const details = document.getElementById('details').value;
+            const date = document.getElementById('date').value;
+
+            if (editingReminderIndex !== null) {
+                reminderData[editingReminderIndex] = { task, details, date };
+                editingReminderIndex = null;
+            } else {
+                reminderData.push({ task, details, date });
+            }
+
+            localStorage.setItem('reminderData', JSON.stringify(reminderData));
+            renderReminders();
+            e.target.reset();
+        });
+
+        function editReminder(index) {
+            const reminder = reminderData[index];
+            document.getElementById('task').value = reminder.task;
+            document.getElementById('details').value = reminder.details;
+            document.getElementById('date').value = reminder.date;
+            editingReminderIndex = index;
+        }
+
+        function deleteReminder(index) {
+            reminderData.splice(index, 1);
+            localStorage.setItem('reminderData', JSON.stringify(reminderData));
+            renderReminders();
+        }
+
+        // Quick Notes
+        const savedNotes = localStorage.getItem('quickNotes');
+        if (savedNotes) document.getElementById('notes').value = savedNotes;
+
+        function saveNotes() {
+            localStorage.setItem('quickNotes', document.getElementById('notes').value);
+            document.getElementById('save-status').innerText = "Notes saved!";
+            setTimeout(() => document.getElementById('save-status').innerText = "", 2000);
+        }
+    </script>
+</body>
+</html>

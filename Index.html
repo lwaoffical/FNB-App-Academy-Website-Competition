@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Companion SA - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h2 class="nav-logo">Campus Companion SA</h2>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="toolkit.html">Toolkit</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <main>
+        <!-- Quote -->
+        <section>
+            <h2>Motivational Quote</h2>
+            <blockquote id="quote">Loading...</blockquote>
+            <p id="author"></p>
+        </section>
+
+
+       <!-- Timetable -->
+<section>
+    <h2>Your Timetable</h2>
+    <table id="timetable-table">
+        <thead>
+            <tr>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody id="timetable-body">
+            <tr>
+                <td colspan="7">No timetable data yet.</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- Reminders -->
+<section>
+    <h2>Test & Assignment Reminders</h2>
+    <ul id="reminders-display"></ul>
+</section>
+
+<!-- Quick Notes -->
+<section>
+    <h2>Quick Notes</h2>
+    <textarea id="notes" placeholder="Write your daily notes here..."></textarea>
+    <button onclick="saveNotes()">Save Notes</button>
+    <p id="save-status" style="color: green;"></p>
+</section>
+
+            <!-- Weather -->
+        <section>
+            <h2>Weather</h2>
+            <p><strong>Location:</strong> <span id="location">--</span></p>
+            <p><strong>Temperature:</strong> <span id="temperature">--</span>°C</p>
+            <p><strong>Condition:</strong> <span id="condition">--</span></p>
+        </section>
+
+            <footer>
+        <p>&copy; 2025 Campus Companion SA</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
